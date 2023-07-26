@@ -41,7 +41,7 @@ variable "spoke_subnets" {
 variable "myips" {
   type        = list(string)
   description = "A list of IP addresses to allow access to the firewall"
-  default     = ["86.178.105.48"]
+  default     = []
 }
 
 
