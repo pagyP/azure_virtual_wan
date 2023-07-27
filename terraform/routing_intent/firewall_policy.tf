@@ -118,23 +118,25 @@ resource "azurerm_firewall_policy_rule_collection_group" "child_firewall_policy_
       destination_ports = ["*"]
     }
   }
-  nat_rule_collection {
-    name     = "${each.value["location"]}-child_nat_rule_collection"
-    priority = 100
-    action   = "Dnat"
-    rule {
-      name                = "DNAT-to-${each.value["name"]}-vm"
-      protocols           = ["TCP"]
-      source_ip_groups    = [azurerm_ip_group.myips.id]
-      destination_address = azurerm_firewall.securehub[each.key].virtual_hub[0].public_ip_addresses[0]
-      destination_ports   = ["22"]
-      translated_port     = "22"
-      translated_address  = azurerm_network_interface.vm[each.key].private_ip_address
-    }
-  }
-  depends_on = [
-    time_sleep.wait_180_seconds,
-    azurerm_ip_group.myips
-  ]
+
+  #Removed DNAT rules in favour of using Azure Bastion
+  # nat_rule_collection {
+  #   name     = "${each.value["location"]}-child_nat_rule_collection"
+  #   priority = 100
+  #   action   = "Dnat"
+  #   rule {
+  #     name                = "DNAT-to-${each.value["name"]}-vm"
+  #     protocols           = ["TCP"]
+  #     source_ip_groups    = [azurerm_ip_group.myips.id]
+  #     destination_address = azurerm_firewall.securehub[each.key].virtual_hub[0].public_ip_addresses[0]
+  #     destination_ports   = ["22"]
+  #     translated_port     = "22"
+  #     translated_address  = azurerm_network_interface.vm[each.key].private_ip_address
+  #   }
+  # }
+  # depends_on = [
+  #   time_sleep.wait_180_seconds,
+  #   azurerm_ip_group.myips
+  # ]
 
 }

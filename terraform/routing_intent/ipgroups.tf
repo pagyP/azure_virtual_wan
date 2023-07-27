@@ -16,11 +16,12 @@ resource "azurerm_ip_group" "spoke_vnets" {
 
 }
 
-resource "azurerm_ip_group" "myips" {
-  name                = "myips"
-  resource_group_name = azurerm_resource_group.ipgroups.name
-  location            = azurerm_resource_group.ipgroups.location
-  cidrs               = var.myips
+#This IP Group was used for DNAT rules to ssh to vms.  Azure Bastion now used in favour of DNAT rules
+# resource "azurerm_ip_group" "myips" {
+#   name                = "myips"
+#   resource_group_name = azurerm_resource_group.ipgroups.name
+#   location            = azurerm_resource_group.ipgroups.location
+#   cidrs               = var.myips
 
-}
+# }
 

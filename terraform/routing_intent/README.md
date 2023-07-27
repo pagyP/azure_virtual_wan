@@ -7,5 +7,7 @@
 <img src="/terraform\routing_intent\Routing Intent.png" alt="High Level Design">
 
 - When destroying use terraform apply -destroy -parallelism=1 -auto-approve.  This helps avoid some race conditions when destroying the resources.
+- 
+- Deploying these resources will cost you money. Conservative estimate is ~ $2000 per month  Make sure you destroy them when you are done.
 
 - Original work from https://github.com/spotakash/azurenetworking but customised for my needs.  TODO feedback some changes to the original repo.

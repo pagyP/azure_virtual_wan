@@ -67,6 +67,14 @@ resource "azurerm_virtual_hub_connection" "spoke_to_vhub" {
   ]
 }
 
+resource "azurerm_virtual_hub_connection" "main" {
+  name = "bastion-vnet-hub"
+  virtual_hub_id = azurerm_virtual_hub.vhub["WEU-HUB"].id
+  remote_virtual_network_id = azurerm_virtual_network.main.id
+  internet_security_enabled = false
+  
+}
+
 # Spoke Subnets
 resource "azurerm_subnet" "spoke_subnets" {
   for_each             = var.spoke_subnets
