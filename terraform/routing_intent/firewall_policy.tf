@@ -18,10 +18,10 @@ resource "azurerm_firewall_policy" "parent_firewall_policy" {
       mode = "Alert"
     }
   }
-  
+
 
   tags = local.common_tags
-  
+
 }
 # Using the parent policy to control access to the internet with app rules
 resource "azurerm_firewall_policy_rule_collection_group" "parent_firewall_policy_rule" {
@@ -138,5 +138,76 @@ resource "azurerm_firewall_policy_rule_collection_group" "child_firewall_policy_
   #   time_sleep.wait_180_seconds,
   #   azurerm_ip_group.myips
   # ]
+
+}
+
+resource "azurerm_firewall_policy_rule_collection_group" "bastionrulesweufw" {
+  #for_each           = var.spoke_vnets_ip_groups
+  #name               = "${each.value["name"]}-bastionrules"
+  name               = "bastionrules-group"
+  firewall_policy_id = azurerm_firewall_policy.child_firewall_policy["WEU-HUB"].id
+  priority           = 300
+  network_rule_collection {
+    name     = "bastionrules"
+    priority = 500
+    action   = "Allow"
+    # Allow Bastion to communicate with the spoke vnet
+    rule {
+      name      = "Allow-Bastion-To-WEU-HUB"
+      protocols = ["TCP"]
+      source_ip_groups = [
+        azurerm_ip_group.bastion.id
+      ]
+      destination_ip_groups = [
+        azurerm_ip_group.spoke_vnets["WEU-HUB"].id
+      ]
+      destination_ports = ["22", "3389"]
+    }
+    rule {
+      name      = "Allow-Bastion-To-NEU-HUB"
+      protocols = ["TCP"]
+      source_ip_groups = [
+        azurerm_ip_group.bastion.id
+      ]
+      destination_ip_groups = [
+        azurerm_ip_group.spoke_vnets["NEU-HUB"].id
+      ]
+      destination_ports = ["22", "3389"]
+    }
+  }
+  depends_on = [
+    time_sleep.wait_180_seconds,
+    #azurerm_ip_group.bastion
+  ]
+
+}
+
+resource "azurerm_firewall_policy_rule_collection_group" "bastionrulesneufw" {
+  #for_each           = var.spoke_vnets_ip_groups
+  #name               = "${each.value["name"]}-bastionrules"
+  name               = "bastionrules-group"
+  firewall_policy_id = azurerm_firewall_policy.child_firewall_policy["NEU-HUB"].id
+  priority           = 300
+  network_rule_collection {
+    name     = "bastionrules"
+    priority = 500
+    action   = "Allow"
+    # Allow Bastion to communicate with the spoke vnet
+    rule {
+      name      = "Allow-Bastion-To-NEU-HUB"
+      protocols = ["TCP"]
+      source_ip_groups = [
+        azurerm_ip_group.bastion.id
+      ]
+      destination_ip_groups = [
+        azurerm_ip_group.spoke_vnets["NEU-HUB"].id
+      ]
+      destination_ports = ["22", "3389"]
+    }
+  }
+  depends_on = [
+    time_sleep.wait_180_seconds,
+    #azurerm_ip_group.bastion
+  ]
 
 }

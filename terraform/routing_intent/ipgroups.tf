@@ -25,3 +25,11 @@ resource "azurerm_ip_group" "spoke_vnets" {
 
 # }
 
+resource "azurerm_ip_group" "bastion" {
+  name                = "bastion-ip-group"
+  resource_group_name = azurerm_resource_group.ipgroups.name
+  location            = azurerm_resource_group.ipgroups.location
+  cidrs               = ["10.200.200.0/27"]
+
+}
+
