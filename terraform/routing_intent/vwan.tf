@@ -22,17 +22,17 @@ resource "azurerm_virtual_wan" "wan" {
 
 # vHUBs
 resource "azurerm_virtual_hub" "vhub" {
-  for_each            = var.vhub_ip_groups
-  name                = each.value["name"]
-  location            = each.value["location"]
-  resource_group_name = azurerm_resource_group.corenetworking.name
-  address_prefix = tolist(var.vhub_ip_groups[each.key].cidrs)[0]
+  for_each               = var.vhub_ip_groups
+  name                   = each.value["name"]
+  location               = each.value["location"]
+  resource_group_name    = azurerm_resource_group.corenetworking.name
+  address_prefix         = tolist(var.vhub_ip_groups[each.key].cidrs)[0]
   virtual_wan_id         = azurerm_virtual_wan.wan.id
   sku                    = "Standard"
   hub_routing_preference = "ASPath"
 
   tags = local.common_tags
-  
+
 }
 
 
@@ -58,7 +58,7 @@ resource "azurerm_virtual_hub_connection" "spoke_to_vhub" {
   virtual_hub_id            = azurerm_virtual_hub.vhub[each.key].id
   remote_virtual_network_id = azurerm_virtual_network.spoke_vnets[each.key].id
   internet_security_enabled = true
-  
+
 
   depends_on = [
     azurerm_virtual_hub.vhub,
@@ -68,11 +68,11 @@ resource "azurerm_virtual_hub_connection" "spoke_to_vhub" {
 }
 
 resource "azurerm_virtual_hub_connection" "main" {
-  name = "bastion-vnet-hub"
-  virtual_hub_id = azurerm_virtual_hub.vhub["WEU-HUB"].id
+  name                      = "bastion-vnet-hub"
+  virtual_hub_id            = azurerm_virtual_hub.vhub["WEU-HUB"].id
   remote_virtual_network_id = azurerm_virtual_network.main.id
   internet_security_enabled = false
-  
+
 }
 
 # Spoke Subnets
@@ -104,7 +104,7 @@ resource "azurerm_firewall" "securehub" {
 
   tags = local.common_tags
 
-  
+
 }
 
 
